@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "squeue.h"
+#include "util.h"
 void fun1(){
     std::cout << "Hello, from demo1!\n";
     while (true) {
@@ -128,16 +129,7 @@ void fun7(){
 }
 
 
-void isLegal(int argc, char* argv[]){
-    std::cout << "Number of arguments: " << argc << std::endl;
-    for(int i = 0; i < argc; i++) {
-        std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
-    }
-    if (argc<=1) {
-        std::cout << "缺少参数，程序已退出！ " << argc << std::endl; 
-        exit(-1);
-    }
-}
+
 void fun8(int argc, char* argv[]){
     isLegal(argc,argv);
 
