@@ -3,13 +3,29 @@
 #include "squeue.h"
 #include <cstdio>
 #include <iostream>
-
+#include <functional>
 inline void misjudgment(int ret,const char *s){
     if (ret==-1) {
         perror(s);
         // cout<< s<<" failed"<<endl;
     }
 }
+
+inline void misjudgment(int ret,const char *s,std::function<void ()> fun){
+    if (ret==-1) {
+        perror(s);
+        fun();
+        // cout<< s<<" failed"<<endl;
+    }
+}
+
+inline void misjudgment(int ret,int jud,const char *s){
+    if (ret==jud) {
+        perror(s);
+        // cout<< s<<" failed"<<endl;
+    }
+}
+
 
 inline void isLegal(int argc, char* argv[]){
     std::cout << "Number of arguments: " << argc << std::endl;
