@@ -5,8 +5,28 @@
 #include <ostream>
 #include <sys/types.h>
 #include <sys/sem.h>
-
+#include <string.h>
 #include <unistd.h>
+//------------------------------------
+// 检查一个类型是否可以被输出到 std::cout
+template <typename T, typename = void>
+struct is_printable : std::false_type {};
+
+template <typename T>
+struct is_printable<T, std::void_t<decltype(std::cout << std::declval<T>())>> : std::true_type {};
+
+// 使用 is_printable
+template <typename T>
+void print_if_possible(const T& value) {
+    if constexpr (is_printable<T>::value) {
+        std::cout << value << std::endl;
+    } else {
+        std::cout << "Cannot print value of this type" << std::endl;
+    }
+}
+//---------
+
+
 template<class T,int MaxLength>
 class squeue{
 private:
@@ -75,8 +95,8 @@ public:
         std::cout<< "tail : "<<tail<<std::endl;
         std::cout<< "m_length : "<<m_length<<std::endl;
         for (int i=0; i<size(); i++) {
-            std::cout<< "m_data["<<(head+i)%MaxLength<<"] : "<<m_data[(head+i)%MaxLength] <<std::endl;
-            // sleep(1);
+            std::cout << "m_data[" << (head+i) %MaxLength <<"] : ";
+            print_if_possible(m_data[(head+i)%MaxLength]);
         }
         std::cout<< "              "<<std::endl;
 
@@ -108,4 +128,20 @@ public:
     int getvalue();
     bool destroy();
     ~csemp(){} 
+};
+
+struct Data{
+    int id;
+    char name[51];// 不能用string
+    // std::string s;
+
+    void set(int _id,const char *s){
+        id=_id;
+        strcpy(name,s);
+    }
+    friend std::ostream & operator << (std::ostream &out,const Data &data)
+    {
+        out<<"["<<data.id<<"]=>"<<data.name<<std::endl;
+        return out;
+    }
 };

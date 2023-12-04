@@ -127,11 +127,7 @@ void fun7(){
     }
 }
 
-struct Data{
-    int id;
-    char name[51];// 不能用string
-    // std::string s;
-};
+
 void isLegal(int argc, char* argv[]){
     std::cout << "Number of arguments: " << argc << std::endl;
     for(int i = 0; i < argc; i++) {
