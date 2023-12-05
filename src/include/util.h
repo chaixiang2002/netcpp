@@ -70,3 +70,9 @@ inline void print(const char* s){
 inline bool str_eq(const char* a,const char* b){
     return strcmp(a, b)==0?1:0;
 }
+
+// 文件传输
+struct file_info{
+    char name[256];
+    int size;
+};

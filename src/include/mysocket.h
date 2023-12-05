@@ -2,6 +2,7 @@
 
 #include "util.h"
 #include <arpa/inet.h>
+#include <cstddef>
 #include <cstdint>
 #include <fcntl.h>
 #include <functional>
@@ -62,6 +63,18 @@ public:
         serv_addr.sin_addr.s_addr=inet_addr(ip);
         serv_addr.sin_port=htons(port);
         judge(connect(sockfd,(sockaddr*)&serv_addr,sizeof(serv_addr)),"socket connect failed");
+    }
+
+    void send(void *buffer,const size_t size){
+        if (sockfd==-1) {
+            LOG("send() failed");
+            return ;
+        }
+        if (::send(sockfd, buffer, size, 0)<=0) {
+            LOG("send() failed");
+            return ;
+        }
+
     }
 
     int getsockfd(){
