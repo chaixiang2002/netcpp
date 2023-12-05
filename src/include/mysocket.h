@@ -3,9 +3,11 @@
 #include "util.h"
 #include <arpa/inet.h>
 #include <cstdint>
+#include <fcntl.h>
 #include <functional>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <memory>
 class mysocket{
     int sockfd;
 public:
@@ -36,17 +38,21 @@ public:
 
     void _listen(int n){
         judge(listen(sockfd, n), "sock listen failed");
+        
+        // sock设置非阻塞
+        // setnonblocking();
     }
 
-    mysocket&& _accpet(){
+    std::shared_ptr<mysocket> _accpet(){
         struct sockaddr_in clnt_addr;
         socklen_t clint_addr_len=sizeof(clnt_addr);
         bzero(&clnt_addr,sizeof(clnt_addr));
         int clnt_sockfd=accept(sockfd,(sockaddr*)&clnt_addr,&clint_addr_len);
         judge(clnt_sockfd,"socket accept error");
         printf("new client fd: %d   IP: %s   Port: %d  \n",clnt_sockfd,inet_ntoa(clnt_addr.sin_addr),ntohs(clnt_addr.sin_port));
-        mysocket clnt_sock(clnt_sockfd);
-        return std::move(clnt_sock);
+        
+        auto clnt_mysock = std::make_shared<mysocket>(clnt_sockfd);
+        return clnt_mysock;
     }
 
     void _connect(int family,const char *ip,int port){
@@ -57,6 +63,7 @@ public:
         serv_addr.sin_port=htons(port);
         judge(connect(sockfd,(sockaddr*)&serv_addr,sizeof(serv_addr)),"socket connect failed");
     }
+
     int getsockfd(){
         return sockfd;
     }  
@@ -64,6 +71,9 @@ public:
         fun=_fun;
         // std::bind(_fun,sockfd);
     } 
+    void setnonblocking(){
+        fcntl(sockfd, F_SETFL,fcntl(sockfd, F_GETFL)|O_NONBLOCK);
+    }
 
     void closefd(){
         if (sockfd!=-1) {

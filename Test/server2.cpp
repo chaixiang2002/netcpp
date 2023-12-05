@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <memory>
 #include <sys/types.h>          /* See NOTES */
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -10,21 +11,20 @@
 using namespace std;
 
 void fun(int argc,char *argv[]){
-    // create
+    // read config
+    auto[ip,port]=read_config("server");
+    
+    // create sock
     mysocket serv_sock(AF_INET,SOCK_STREAM);
-
-    // addr
-
-    // bind
-    serv_sock._bind(AF_INET, "192.168.127.130", 8080);
-
-    // listen
+    // bind sock and adrr
+    serv_sock._bind(AF_INET, ip.c_str(), port);
+    // sock start listen... 
     serv_sock._listen(SOMAXCONN);
-
-    // accpet
-    mysocket clnt_mysock=serv_sock._accpet();
-
+    // accpet a new sock
+    shared_ptr<mysocket> clnt_mysock=serv_sock._accpet();
     // callback
+
+    //  Write business logic task;
     std::function<void (int)> callback_fun=[](int clnt_sockfd){
         while (true)
         {
@@ -46,8 +46,10 @@ void fun(int argc,char *argv[]){
             
         }
     };
-    clnt_mysock.fun(clnt_mysock.getsockfd());
-
+    // Assign task
+    clnt_mysock->set_callback_fun(callback_fun);
+    // run task
+    clnt_mysock->fun(clnt_mysock->getsockfd());
 }
 
 int main(int argc,char *argv[]){
