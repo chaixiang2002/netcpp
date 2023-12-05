@@ -13,8 +13,8 @@ using namespace std;
 
 void fun(int argc,char *argv[]){
     mysocket clnt_sock(AF_INET,SOCK_STREAM);
-    clnt_sock._bind(AF_INET, "192.168.127.130", 8088);
-    clnt_sock._connect();
+    // clnt_sock._bind(AF_INET, "192.168.127.130", 8088);
+    clnt_sock._connect(AF_INET,"192.168.127.130", 8088);
     int sockfd=clnt_sock.getsockfd();
     while (true)
     {
@@ -32,7 +32,6 @@ void fun(int argc,char *argv[]){
             // errif(true, "socket read error");
         }
     }
-    close(sockfd);
 }
 
 int main(int argc,char *argv[]){

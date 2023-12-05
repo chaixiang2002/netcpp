@@ -2,6 +2,7 @@
 
 #include "squeue.h"
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <functional>
 inline void misjudgment(int ret,const char *s){
@@ -15,7 +16,8 @@ inline void misjudgment(int ret,const char *s,std::function<void ()> fun){
     if (ret==-1) {
         perror(s);
         fun();
-        // cout<< s<<" failed"<<endl;
+        std::cout<< s<<" failed"<<std::endl;
+        // exit(0);
     }
 }
 
